@@ -1,0 +1,253 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --wine-red: #7B1E3A;
+  --dark-wine: #4A0F24;
+  --champagne: #F7E7CE;
+  --soft-champagne: #FFF6E8;
+  --cream-bg: #FAF4EA;
+  --gold-muted: #C8A96A;
+  --text-dark: #1E1B1B;
+  --text-muted: #6B5F5F;
+  --success: #2E8B57;
+  --danger: #B42318;
+  --warning: #B7791F;
+  --background: var(--cream-bg);
+  --foreground: var(--text-dark);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(247, 231, 206, 0.85), transparent 34rem),
+    linear-gradient(135deg, #faf4ea 0%, #fffaf2 52%, #f7e7ce 100%);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.form-field {
+  @apply w-full rounded-xl border border-champagne-300 bg-white/85 px-3.5 py-2.5 text-sm text-stone-950 outline-none transition duration-200 placeholder:text-stone-400 focus:border-wine-500 focus:bg-white focus:ring-4 focus:ring-wine-100/80;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-wine-500 px-4 py-2.5 text-sm font-semibold text-champagne-50 shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-wine-700 hover:shadow-premium active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl border border-champagne-300 bg-champagne-100 px-4 py-2.5 text-sm font-semibold text-wine-900 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-gold-muted hover:bg-soft-champagne hover:shadow-soft active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.btn-danger {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#B42318] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-red-800 hover:shadow-soft active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.btn-pdf {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl border border-wine-500 bg-white/75 px-4 py-2.5 text-sm font-semibold text-wine-700 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-wine-500 hover:text-champagne-50 hover:shadow-soft disabled:cursor-wait disabled:opacity-70;
+}
+
+.glass-panel {
+  background: rgba(255, 250, 242, 0.74);
+  border: 1px solid rgba(200, 169, 106, 0.28);
+  box-shadow: 0 22px 70px rgba(74, 15, 36, 0.14);
+  backdrop-filter: blur(18px);
+}
+
+.sidebar-brand-card {
+  position: relative;
+  display: block;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(247, 231, 206, 0.24);
+  padding: 0.42rem;
+  background:
+    linear-gradient(135deg, rgba(74, 15, 36, 0.72), rgba(123, 30, 58, 0.36)),
+    rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 46px rgba(28, 5, 15, 0.24);
+  backdrop-filter: blur(16px);
+}
+
+.sidebar-brand-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(200, 169, 106, 0.22), inset 0 1px 0 rgba(255, 246, 232, 0.18);
+  pointer-events: none;
+}
+
+.sidebar-brand-full-image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  filter: saturate(1.04) contrast(1.05) brightness(1.02);
+}
+
+.engraving-text {
+  background-image:
+    linear-gradient(rgba(74, 15, 36, 0.18), rgba(74, 15, 36, 0.18)),
+    url("/assets/The-plague-of-Florence-scaled.jpg");
+  background-size: cover;
+  background-position: center 42%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.table-shell {
+  @apply overflow-x-auto rounded-2xl border border-champagne-300/80 bg-white/80 shadow-soft backdrop-blur;
+}
+
+.data-table {
+  @apply w-full text-left text-sm;
+}
+
+.data-table thead {
+  @apply bg-champagne-100/90 text-xs uppercase tracking-wide text-wine-900;
+}
+
+.data-table tbody {
+  @apply divide-y divide-champagne-100;
+}
+
+.data-table tr {
+  @apply transition duration-200;
+}
+
+.data-table tbody tr:hover {
+  @apply bg-soft-champagne;
+}
+
+.data-table th,
+.data-table td {
+  @apply px-4 py-3;
+}
+
+.skeleton {
+  @apply relative overflow-hidden rounded-xl bg-champagne-100;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent);
+      animation: shimmer 1.6s infinite;
+}
+
+.intro-engraving-bg {
+  background-image:
+    linear-gradient(115deg, rgba(250, 244, 234, 0.54), rgba(255, 246, 232, 0.46) 46%, rgba(74, 15, 36, 0.18)),
+    url("/assets/The-plague-of-Florence-scaled.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.42;
+  mix-blend-mode: multiply;
+}
+
+.intro-title-frame {
+  font-family: "Cinzel", "Cormorant Garamond", "Times New Roman", Georgia, serif;
+  font-weight: 900;
+  letter-spacing: 0.014em;
+  font-variant-ligatures: common-ligatures;
+  font-feature-settings: "liga" 1, "kern" 1;
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 246, 232, 0.86))
+    drop-shadow(0 16px 28px rgba(74, 15, 36, 0.18));
+}
+
+.intro-title-mask {
+  position: relative;
+  display: block;
+  isolation: isolate;
+  color: #7B1E3A;
+  -webkit-text-fill-color: #7B1E3A;
+  -webkit-text-stroke: clamp(0.28px, 0.035vw, 0.65px) rgba(74, 15, 36, 0.72);
+  paint-order: stroke fill;
+  text-shadow:
+    0 1px 0 rgba(255, 246, 232, 0.62),
+    0 8px 18px rgba(74, 15, 36, 0.18);
+  animation: title-glow 5.5s ease-in-out infinite;
+}
+
+.intro-title-mask::before,
+.intro-title-mask::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.intro-title-mask::before {
+  z-index: -2;
+  color: rgba(74, 15, 36, 0.66);
+  -webkit-text-fill-color: rgba(74, 15, 36, 0.66);
+  transform: translate(0.018em, 0.026em);
+  text-shadow:
+    0 10px 22px rgba(74, 15, 36, 0.24),
+    0 2px 0 rgba(74, 15, 36, 0.2);
+}
+
+.intro-title-mask::after {
+  z-index: -1;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: clamp(0.95px, 0.09vw, 1.65px) rgba(200, 169, 106, 0.34);
+  opacity: 0.62;
+  transform: translate(0.004em, 0.006em);
+}
+
+.start-button-shine::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  transform: translateX(-70%) rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(247, 231, 206, 0.46), transparent);
+  transition: transform 650ms ease;
+}
+
+.start-button-shine:hover::before {
+  transform: translateX(70%) rotate(18deg);
+}
+
+@keyframes title-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 0 rgba(200, 169, 106, 0.15));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(200, 169, 106, 0.34));
+  }
+}
+
+@keyframes slow-gradient {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, -1%, 0) scale(1.04);
+  }
+}

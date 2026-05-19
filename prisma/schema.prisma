@@ -1,0 +1,228 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  SECRETARY
+  TECHNICIAN
+  DOCTOR
+  PATIENT
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum DeviceType {
+  XRAY
+  ULTRASOUND
+  MRI
+  CT
+}
+
+enum DeviceStatus {
+  ACTIVE
+  MAINTENANCE
+  PASSIVE
+}
+
+enum ExaminationType {
+  XRAY
+  ULTRASOUND
+  MRI
+  CT
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  PATIENT_ARRIVED
+  IMAGING_STARTED
+  IMAGING_COMPLETED
+  REPORT_PENDING
+  REPORTED
+  CANCELLED
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum ImagingStatus {
+  PLANNED
+  PATIENT_ARRIVED
+  STARTED
+  COMPLETED
+  IMAGE_UPLOADED
+  REPORT_PENDING
+}
+
+enum ReportStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REVISED
+}
+
+model User {
+  id             String        @id @default(cuid())
+  name           String
+  surname        String
+  email          String        @unique
+  passwordHash   String
+  role           Role
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  createdAppointments Appointment[] @relation("CreatedAppointments")
+  technicianStudies    ImagingStudy[] @relation("TechnicianStudies")
+  doctorReports        Report[]      @relation("DoctorReports")
+  uploadedFiles        StudyFile[]   @relation("UploadedFiles")
+  auditLogs            AuditLog[]
+  notifications        Notification[]
+  patientProfile       Patient?
+}
+
+model Patient {
+  id             String        @id @default(cuid())
+  userId         String?       @unique
+  user           User?         @relation(fields: [userId], references: [id])
+  nationalId     String        @unique
+  firstName      String
+  lastName       String
+  birthDate      DateTime
+  gender         Gender
+  phone          String
+  email          String
+  address        String
+  bloodGroup     String?
+  patientNumber  String        @unique
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  appointments   Appointment[]
+  imagingStudies ImagingStudy[]
+  reports        Report[]
+}
+
+model Device {
+  id             String        @id @default(cuid())
+  name           String
+  type           DeviceType
+  roomNumber     String
+  status         DeviceStatus  @default(ACTIVE)
+  isActive       Boolean       @default(true)
+  description    String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  appointments   Appointment[]
+  imagingStudies ImagingStudy[]
+}
+
+model Appointment {
+  id              String            @id @default(cuid())
+  patientId       String
+  deviceId        String
+  examinationType ExaminationType
+  appointmentDate DateTime
+  startTime       DateTime
+  endTime         DateTime
+  status          AppointmentStatus @default(SCHEDULED)
+  priority        Priority          @default(NORMAL)
+  notes           String?
+  createdById     String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  patient         Patient           @relation(fields: [patientId], references: [id])
+  device          Device            @relation(fields: [deviceId], references: [id])
+  createdBy       User              @relation("CreatedAppointments", fields: [createdById], references: [id])
+  imagingStudy    ImagingStudy?
+
+  @@index([deviceId, startTime, endTime])
+  @@index([patientId, startTime, endTime])
+}
+
+model ImagingStudy {
+  id            String        @id @default(cuid())
+  appointmentId String        @unique
+  patientId     String
+  deviceId      String
+  status        ImagingStatus @default(PLANNED)
+  technicianId  String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  appointment   Appointment   @relation(fields: [appointmentId], references: [id])
+  patient       Patient       @relation(fields: [patientId], references: [id])
+  device        Device        @relation(fields: [deviceId], references: [id])
+  technician    User?         @relation("TechnicianStudies", fields: [technicianId], references: [id])
+  files         StudyFile[]
+  report        Report?
+}
+
+model StudyFile {
+  id             String       @id @default(cuid())
+  imagingStudyId String
+  fileName       String
+  filePath       String
+  fileType       String
+  fileSize       Int
+  uploadedById   String
+  uploadedAt     DateTime     @default(now())
+  imagingStudy   ImagingStudy @relation(fields: [imagingStudyId], references: [id])
+  uploadedBy     User         @relation("UploadedFiles", fields: [uploadedById], references: [id])
+}
+
+model Report {
+  id             String       @id @default(cuid())
+  imagingStudyId String       @unique
+  patientId      String
+  doctorId       String
+  clinicalInfo   String
+  findings       String
+  conclusion     String
+  status         ReportStatus @default(DRAFT)
+  approvedAt     DateTime?
+  revisedAt      DateTime?
+  sentToENabiz   Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  imagingStudy   ImagingStudy @relation(fields: [imagingStudyId], references: [id])
+  patient        Patient      @relation(fields: [patientId], references: [id])
+  doctor         User         @relation("DoctorReports", fields: [doctorId], references: [id])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String
+  entityType  String
+  entityId    String?
+  description String
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([action])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}

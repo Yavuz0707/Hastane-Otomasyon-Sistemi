@@ -1,0 +1,53 @@
+{
+  "name": "hastane-radyoloji-otomasyon-sistemi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "set NEXT_PRIVATE_BUILD_WORKER=0&& set NEXT_TELEMETRY_DISABLED=1&& next build --no-lint",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "node scripts/migrate-db.mjs",
+    "prisma:deploy": "node scripts/migrate-db.mjs",
+    "prisma:seed": "node prisma/seed.mjs",
+    "db:reset": "node scripts/reset-db.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "^5.2.8",
+    "@fontsource/grenze-gotisch": "^5.2.8",
+    "@fontsource/pirata-one": "^5.2.8",
+    "@fontsource/unifrakturcook": "^5.2.8",
+    "@fontsource/unifrakturmaguntia": "^5.2.8",
+    "@prisma/client": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "date-fns": "^3.6.0",
+    "iconv-lite": "^0.7.2",
+    "jose": "^5.9.6",
+    "lucide-react": "^1.16.0",
+    "next": "^14.2.18",
+    "pdfkit": "^0.15.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.2",
+    "@types/pdfkit": "^0.13.5",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.18",
+    "postcss": "^8.4.49",
+    "prisma": "^6.0.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.mjs"
+  }
+}
