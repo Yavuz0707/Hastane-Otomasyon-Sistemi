@@ -3,10 +3,6 @@
 Modern, rol bazlı ve web tabanlı bir **hastane radyoloji departmanı otomasyon sistemi**. Randevu planlama, hasta yönetimi, çekim takibi, rapor yazımı, PDF rapor çıktısı, hasta sonuç portalı ve yönetim panellerini tek merkezde toplar.
 
 <p align="center">
-  <img src="public/assets/1.png" alt="Hastane Radyoloji Otomasyon Sistemi logosu" width="760" />
-</p>
-
-<p align="center">
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-111111?style=for-the-badge&logo=nextdotjs" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
   <img alt="Prisma" src="https://img.shields.io/badge/Prisma-6-2D3748?style=for-the-badge&logo=prisma" />
@@ -54,16 +50,18 @@ Sistem şu operasyonları destekler:
 
 Uygulama genelinde **wine red**, **champagne**, **cream** ve **muted gold** renkleri kullanılır. Marka görseli sidebar ve PDF rapor başlığında kurumsal bir kimlik olarak entegre edilmiştir.
 
-### Logo
+### Uygulama Ekran Görüntüleri
 
 <p align="center">
-  <img src="public/assets/1.png" alt="Uygulama marka görseli" width="720" />
+  <img src="public/assets/Screenshot 2026-05-19 215625.png" alt="Hastane Radyoloji Otomasyon Sistemi intro ekranı" width="760" />
 </p>
 
-### Intro Arka Plan Gravürü
+<p align="center">
+  <img src="public/assets/Screenshot 2026-05-19 215708.png" alt="Hastane Radyoloji Otomasyon Sistemi giriş ekranı" width="760" />
+</p>
 
 <p align="center">
-  <img src="public/assets/The-plague-of-Florence-scaled.jpg" alt="Intro ekranında kullanılan tarihi gravür görseli" width="720" />
+  <img src="public/assets/Screenshot 2026-05-19 215720.png" alt="Hastane Radyoloji Otomasyon Sistemi panel ekranı" width="760" />
 </p>
 
 Kullanılan ana renkler:
