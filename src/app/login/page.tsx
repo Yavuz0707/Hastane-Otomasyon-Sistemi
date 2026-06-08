@@ -43,6 +43,7 @@ export default function LoginPage() {
       setError(data.error ?? "Giriş yapılamadı");
       return;
     }
+    localStorage.setItem("sessionExpiry", String(Date.now() + 8 * 60 * 60 * 1000));
     router.push(data.redirectTo);
     router.refresh();
   }

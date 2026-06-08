@@ -22,14 +22,15 @@ const registerSchema = z
       .regex(/[A-Z]/, "En az 1 büyük harf içermelidir")
       .regex(/[0-9]/, "En az 1 rakam içermelidir")
       .regex(/[^A-Za-z0-9]/, "En az 1 özel karakter içermelidir (!@#$ vb.)"),
-    passwordConfirm: z.string()
+    passwordConfirm: z.string(),
+    kvkk: z.literal(true, { errorMap: () => ({ message: "KVKK Aydınlatma Metni'ni onaylamalısınız" }) })
   })
   .refine((d) => d.password === d.passwordConfirm, {
     message: "Şifreler eşleşmiyor",
     path: ["passwordConfirm"]
   });
 
-type FormErrors = Partial<Record<"adSoyad" | "email" | "tcKimlikNo" | "password" | "passwordConfirm" | "root", string>>;
+type FormErrors = Partial<Record<"adSoyad" | "email" | "tcKimlikNo" | "password" | "passwordConfirm" | "kvkk" | "root", string>>;
 
 const features = [
   ["Rol Bazlı Yetki", ShieldCheck],
@@ -41,7 +42,7 @@ const features = [
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ adSoyad: "", email: "", tcKimlikNo: "", password: "", passwordConfirm: "" });
+  const [form, setForm] = useState({ adSoyad: "", email: "", tcKimlikNo: "", password: "", passwordConfirm: "", kvkk: false });
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -49,8 +50,13 @@ export default function RegisterPage() {
   function set(field: keyof typeof form) {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm((prev) => ({ ...prev, [field]: e.target.value }));
-      if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
+      if (errors[field as keyof FormErrors]) setErrors((prev) => ({ ...prev, [field]: undefined }));
     };
+  }
+
+  function toggleKvkk() {
+    setForm((prev) => ({ ...prev, kvkk: !prev.kvkk }));
+    if (errors.kvkk) setErrors((prev) => ({ ...prev, kvkk: undefined }));
   }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -223,6 +229,21 @@ export default function RegisterPage() {
                     />
                   </label>
                   {errors.passwordConfirm && <p className="mt-1 text-xs font-medium text-[#7B1E3A]">{errors.passwordConfirm}</p>}
+                </div>
+
+                <div>
+                  <label className="flex cursor-pointer items-start gap-3">
+                    <input
+                      type="checkbox"
+                      className="mt-0.5 h-4 w-4 rounded border-stone-300 accent-[#7B1E3A]"
+                      checked={form.kvkk}
+                      onChange={toggleKvkk}
+                    />
+                    <span className="text-sm text-stone-600">
+                      <a href="#" className="font-semibold text-[#7B1E3A] hover:underline">KVKK Aydınlatma Metni</a>&apos;ni okudum ve kişisel verilerimin işlenmesine onay veriyorum.
+                    </span>
+                  </label>
+                  {errors.kvkk && <p className="mt-1 text-xs font-medium text-[#7B1E3A]">{errors.kvkk}</p>}
                 </div>
 
                 {errors.root && (
