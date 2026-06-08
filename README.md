@@ -1,6 +1,6 @@
-# Hastane Radyoloji Otomasyon Sistemi
+# Hastane Otomasyon Sistemi
 
-Modern, rol bazlı ve web tabanlı bir **hastane radyoloji departmanı otomasyon sistemi**. Randevu planlama, hasta yönetimi, çekim takibi, rapor yazımı, PDF rapor çıktısı, hasta sonuç portalı ve yönetim panellerini tek merkezde toplar.
+Modern, rol bazlı ve web tabanlı bir **hastane otomasyon sistemi**. Randevu planlama, hasta yönetimi, çekim takibi, rapor yazımı, PDF rapor çıktısı, hasta sonuç portalı, doktor-hasta iletişimi ve yönetim panellerini tek merkezde toplar.
 
 <p align="center">
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-111111?style=for-the-badge&logo=nextdotjs" />
@@ -32,19 +32,26 @@ Modern, rol bazlı ve web tabanlı bir **hastane radyoloji departmanı otomasyon
 - [Varsayımlar](#varsayımlar)
 - [Gelecek Geliştirmeler](#gelecek-geliştirmeler)
 
+---
+
 ## Proje Özeti
 
-Bu uygulama, hastanelerin radyoloji departmanında kullanılan röntgen, ultrason, MR ve tomografi süreçlerini dijitalleştirmek için geliştirilmiş bir ilk sürümdür.
+Bu uygulama, hastanelerin radyoloji departmanında kullanılan röntgen, ultrason, MR ve tomografi süreçlerini dijitalleştirmek için geliştirilmiş tam kapsamlı bir sistemdir.
 
 Sistem şu operasyonları destekler:
 
-- Sekreter tarafından hasta kaydı ve randevu oluşturma
+- Sekreter tarafından hasta kaydı ve randevu oluşturma; randevuya **doktor atanması**
 - Cihaz/oda uygunluk takibi ve randevu çakışma kontrolü
 - Tekniker tarafından çekim süreci yönetimi
 - Görüntü veya demo dosya yükleme
 - Radyolog tarafından rapor taslağı, onay ve revizyon akışı
 - Hasta tarafından onaylı rapor görüntüleme ve PDF indirme
+- **Doktor-hasta mesajlaşması:** Doktor, hastayla doğrudan mesajlaşabilir; hasta bildirimleri panelinden mesajları okuyabilir
+- **Personel içi mesajlaşma:** Admin, sekreter, tekniker ve doktorlar birbirleriyle mesaj gönderebilir
+- **Doktor hasta listesi:** Doktor, ilgilendiği hastaları ve reçeteleri tek ekranda görür
 - Admin tarafından kullanıcı, cihaz, rapor, log ve istatistik yönetimi
+
+---
 
 ## Görsel Kimlik
 
@@ -53,15 +60,15 @@ Uygulama genelinde **wine red**, **champagne**, **cream** ve **muted gold** renk
 ### Uygulama Ekran Görüntüleri
 
 <p align="center">
-  <img src="public/assets/Screenshot 2026-05-19 215625.png" alt="Hastane Radyoloji Otomasyon Sistemi intro ekranı" width="760" />
+  <img src="public/assets/Screenshot 2026-05-19 215625.png" alt="Hastane Otomasyon Sistemi intro ekranı" width="760" />
 </p>
 
 <p align="center">
-  <img src="public/assets/Screenshot 2026-05-19 215708.png" alt="Hastane Radyoloji Otomasyon Sistemi giriş ekranı" width="760" />
+  <img src="public/assets/Screenshot 2026-05-19 215708.png" alt="Hastane Otomasyon Sistemi giriş ekranı" width="760" />
 </p>
 
 <p align="center">
-  <img src="public/assets/Screenshot 2026-05-19 215720.png" alt="Hastane Radyoloji Otomasyon Sistemi panel ekranı" width="760" />
+  <img src="public/assets/Screenshot 2026-05-19 215720.png" alt="Hastane Otomasyon Sistemi panel ekranı" width="760" />
 </p>
 
 Kullanılan ana renkler:
@@ -75,60 +82,76 @@ Kullanılan ana renkler:
 | Cream Background | `#FAF4EA` |
 | Muted Gold | `#C8A96A` |
 
+---
+
 ## Öne Çıkan Özellikler
 
 - **Rol bazlı giriş ve yetkilendirme:** Admin, sekreter, tekniker, doktor ve hasta rolleri.
 - **JWT cookie tabanlı oturum:** HTTP-only cookie ile güvenli oturum yönetimi.
 - **RBAC koruması:** Sayfa ve API seviyesinde rol kontrolü.
 - **Hasta yönetimi:** Hasta kayıt, arama, detay ve geçmiş bilgileri.
-- **Randevu çizelgeleme:** Cihaz ve hasta çakışmasını engelleyen iş kuralları.
+- **Randevu çizelgeleme:** Cihaz ve hasta çakışmasını engelleyen iş kuralları; randevuya doktor atama ve doktor müsaitlik kontrolü.
+- **Doktor atama:** Sekreter randevu oluştururken `DoctorPicker` bileşeniyle uygun doktoru seçer; müsait olmayan doktorlar otomatik olarak işaretlenir.
 - **Cihaz/oda yönetimi:** Aktif, bakımda ve pasif cihaz takibi.
-- **Çekim süreci:** Hasta geldi, çekim başladı, çekim tamamlandı, rapor bekliyor akışı.
+- **Çekim süreci:** Hasta geldi → çekim başladı → çekim tamamlandı → rapor bekliyor akışı.
 - **Dosya yükleme:** Demo PDF/JPG/PNG/DICOM simülasyon dosyası bağlama.
 - **Raporlama:** Taslak, onay, revizyon ve onaylı rapor akışı.
 - **PDF rapor:** Backend tarafından resmi görünümlü PDF üretimi.
-- **Hasta portalı:** Hasta yalnızca kendi onaylı raporlarını görür.
+- **Hasta portalı:** Hasta yalnızca kendi onaylı raporlarını, tetkiklerini ve reçetelerini görür.
+- **Dijital reçete:** Doktor ilaç listesi ve talimatlarla reçete oluşturur; hasta PDF olarak indirebilir.
+- **Muayene kaydı ve tanı yönetimi:** Doktor, tetkik detay sayfasından şikayet ve tanı kaydeder; hasta muayene geçmişini kendi panelinden takip eder.
+- **Doktor-hasta mesajlaşması:** Doktor, hasta listesinden seçtiği hastaya doğrudan mesaj gönderebilir. Hasta, `Bildirimler` sayfasından bu mesajları okur.
+- **Personel içi mesajlaşma:** Admin, sekreter, tekniker ve doktorlar `/messages` sayfasında gerçek zamanlı mesajlaşabilir.
+- **Doktor hasta listesi:** Doktor, raporladığı veya muayene ettiği hastaları tek ekranda görür; reçetelere hızlıca erişir.
+- **Gerçek zamanlı bildirim sistemi:** Rapor onayı, çekim tamamlama, yeni randevu ve kullanıcı kaydı gibi olaylar için rol bazlı bildirimler; header zil ikonu ile anlık erişim.
+- **Hasta randevu talebi:** Hasta portalından tetkik türü, tercih edilen tarih ve saat aralığı seçilerek randevu talebi oluşturulabilir; sekreter onaylayana kadar PENDING kalır.
 - **Audit log:** Kritik işlemlerin denetlenebilir kaydı.
-- **PACS/DICOM hazırlığı:** Gerçek entegrasyon için servis katmanı.
-- **e-Nabız mock:** Onaylı raporlar için simülasyon gönderim alanı.
-- **Gerçek zamanlı bildirim sistemi:** Rapor onayı, çekim tamamlama, yeni randevu ve kullanıcı kaydı gibi olaylar için rol bazlı bildirimler; header'daki zil ikonu ile anlık erişim.
-- **Muayene kaydı ve tanı yönetimi:** Doktor, tetkik detay sayfasından hasta şikayeti ve tanısını kaydedebilir. Muayene geçmişi hasta portalında görüntülenebilir.
-- **Dijital reçete ve PDF çıktısı:** Doktor ilaç listesi ve talimatlarla reçete oluşturur; hasta kendi reçetesini PDF olarak indirebilir.
-- **Hasta tarafından randevu talebi:** Hasta portalından tetkik türü, tercih edilen tarih ve saat aralığı seçilerek randevu talebi oluşturulabilir. Talep PENDING durumunda kalır; sekreter onaylayana kadar planlamaya alınmaz.
 - **Hesap kilitleme:** 5 başarısız giriş denemesinde hesap 15 dakika kilitlenir; kalan deneme sayısı kullanıcıya gösterilir.
 - **Güçlü şifre politikası:** En az 12 karakter, 1 büyük harf, 1 rakam, 1 özel karakter zorunlu.
+- **KVKK onayı:** Kayıt sırasında açık rıza metni gösterilir ve onaylanması zorunludur.
+- **Oturum zaman aşımı:** Belirli süre işlem yapılmazsa oturum otomatik sonlandırılır.
+- **PACS/DICOM hazırlığı:** Gerçek entegrasyon için servis katmanı.
+- **e-Nabız mock:** Onaylı raporlar için simülasyon gönderim alanı.
 - **Premium dashboard UI:** Wine red ve champagne temalı responsive arayüz.
+
+---
 
 ## Roller ve Paneller
 
 | Rol | Panel | Temel Yetkiler |
 | --- | --- | --- |
-| Admin | `/admin/dashboard` | Kullanıcı, cihaz, randevu, rapor, log ve istatistik yönetimi |
-| Sekreter | `/secretary/dashboard` | Hasta kayıt, hasta arama, randevu oluşturma ve müsaitlik kontrolü |
-| Tekniker | `/technician/dashboard` | Günlük çekim listesi, çekim durumu, not ve dosya yükleme |
-| Doktor | `/doctor/dashboard` | Rapor bekleyen tetkikler, taslak raporlar, onaylı raporlar |
-| Hasta | `/patient/dashboard` | Kendi randevuları, tetkikleri, onaylı raporları ve PDF indirme |
+| Admin | `/admin/dashboard` | Kullanıcı, cihaz, randevu, rapor, log, istatistik yönetimi; personel mesajlaşması |
+| Sekreter | `/secretary/dashboard` | Hasta kayıt, randevu oluşturma (doktor atama dahil), müsaitlik kontrolü; personel mesajlaşması |
+| Tekniker | `/technician/dashboard` | Günlük çekim listesi, çekim durumu, not ve dosya yükleme; personel mesajlaşması |
+| Doktor | `/doctor/dashboard` | Rapor bekleyen tetkikler, taslak/onaylı raporlar, hasta listesi, doktor-hasta mesajlaşması; personel mesajlaşması |
+| Hasta | `/patient/dashboard` | Kendi randevuları, tetkikleri, onaylı raporları, reçeteleri, muayene geçmişi, doktor mesajları (bildirimler) |
+
+---
 
 ## Uçtan Uca İş Akışı
 
 ```mermaid
 flowchart TD
   A[Admin kullanıcı ve cihazları yönetir] --> B[Sekreter hasta kaydı oluşturur]
-  B --> C[Sekreter uygun cihaz ve saat seçer]
+  B --> C[Sekreter uygun cihaz, doktor ve saat seçer]
   C --> D{Çakışma var mı?}
   D -- Evet --> C
-  D -- Hayır --> E[Randevu planlanır]
+  D -- Hayır --> E[Randevu planlanır - doktor atanır]
   E --> F[Hasta geldi]
   F --> G[Tekniker çekimi başlatır]
   G --> H[Tekniker çekimi tamamlar]
   H --> I[Görüntü veya dosya yüklenir]
   I --> J[Tetkik rapor bekliyor olur]
-  J --> K[Doktor raporu yazar]
+  J --> K[Doktor raporu yazar ve muayene kaydeder]
   K --> L{Rapor onaylandı mı?}
   L -- Taslak --> K
   L -- Onaylandı --> M[Hasta panelinde görünür]
   M --> N[Hasta PDF raporu indirir]
+  K --> O[Doktor hastaya mesaj gönderir]
+  O --> P[Hasta bildirimler panelinden mesajı okur]
 ```
+
+---
 
 ## Mimari
 
@@ -143,9 +166,12 @@ flowchart LR
   Api --> Uploads[public/uploads]
   Api --> Pdf[PDFKit Rapor Üretimi]
   Api --> Mock[e-Nabız ve PACS Mock Servisleri]
+  Api --> Msg[Mesajlaşma Servisi]
 ```
 
 Uygulama tek Next.js projesi içinde hem frontend hem backend katmanlarını barındırır. Sayfa erişimleri server-side role guard ile korunur; API endpointleri ayrıca kullanıcı rolü ve hasta sahipliği kontrolü yapar.
+
+---
 
 ## Teknoloji Seti
 
@@ -159,6 +185,8 @@ Uygulama tek Next.js projesi içinde hem frontend hem backend katmanlarını bar
 | PDF | PDFKit |
 | Test | Node.js built-in test runner |
 | Dokümantasyon | Markdown, Mermaid diyagramları |
+
+---
 
 ## Kurulum
 
@@ -192,6 +220,8 @@ npm run build
 npm run start -- -p 3000
 ```
 
+---
+
 ## .env
 
 Örnek `.env` içeriği:
@@ -199,16 +229,14 @@ npm run start -- -p 3000
 ```env
 DATABASE_URL="file:./dev.db"
 JWT_SECRET="change-this-development-secret-at-least-32-chars"
-NEXT_PUBLIC_APP_NAME="Hastane Radyoloji Otomasyon Sistemi"
+NEXT_PUBLIC_APP_NAME="Hastane Otomasyon Sistemi"
 UPLOAD_DIR="public/uploads"
 COOKIE_SECURE="false"
 ```
 
-Notlar:
+> `COOKIE_SECURE=false` sadece lokal HTTP geliştirme içindir. Production ortamında HTTPS kullanılıyorsa `COOKIE_SECURE=true` yapılmalıdır. SQLite geliştirme kolaylığı için seçilmiştir; Prisma şeması PostgreSQL geçişine uygundur.
 
-- `COOKIE_SECURE=false` sadece lokal HTTP geliştirme içindir.
-- Production ortamında HTTPS kullanılıyorsa `COOKIE_SECURE=true` yapılmalıdır.
-- SQLite geliştirme kolaylığı için seçilmiştir; Prisma şeması PostgreSQL geçişine uygundur.
+---
 
 ## Demo Kullanıcılar
 
@@ -220,16 +248,20 @@ Notlar:
 | Doktor | `doktor@radyoloji.local` | `Doktor123!` |
 | Hasta | `hasta@radyoloji.local` | `Hasta123!` |
 
+---
+
 ## Kayıt Akışı
 
 Yeni kullanıcılar `/register` sayfasından sisteme kayıt olabilir.
 
 | Adım | Açıklama |
 | --- | --- |
-| 1. Kayıt | Kullanıcı ad soyad, e-posta, TC kimlik no ve şifre girer. TC kimlik numarası Türkiye kimlik algoritmasıyla doğrulanır. |
+| 1. Kayıt | Kullanıcı ad soyad, e-posta, TC kimlik no ve şifre girer. TC kimlik numarası Türkiye kimlik algoritmasıyla doğrulanır. KVKK açık rızası kabul edilmek zorundadır. |
 | 2. Hesap oluşturma | Sistem kullanıcıyı `PATIENT` rolüyle ve `isActive: false` durumunda kaydeder. JWT cookie set edilmez, giriş yapılamaz. |
 | 3. Admin onayı | Admin `/admin/rol-atama` sayfasında pasif kullanıcıyı görür, isterse rolünü değiştirir ve "Aktif Et" ile hesabı açar. |
 | 4. Giriş | Kullanıcı artık `/login` sayfasından giriş yapabilir. |
+
+---
 
 ## Komutlar
 
@@ -243,6 +275,8 @@ Yeni kullanıcılar `/register` sayfasından sisteme kayıt olabilir.
 | `npm run prisma:seed` | Demo verilerini oluşturur |
 | `npm run db:reset` | Veritabanını sıfırlar ve yeniden hazırlar |
 | `npm test` | Otomatik testleri çalıştırır |
+
+---
 
 ## API Özeti
 
@@ -267,6 +301,12 @@ Yeni kullanıcılar `/register` sayfasından sisteme kayıt olabilir.
 - `GET /api/patients/:id`
 - `PUT /api/patients/:id`
 - `GET /api/patients/:id/history`
+- `POST /api/patients/:id/message` — Doktordan hastaya mesaj gönderme
+- `GET /api/patients/:id/prescriptions` — Hastanın reçeteleri
+
+### Doctors
+
+- `GET /api/doctors/availability` — Doktor müsaitlik kontrolü (tarih ve saat aralığına göre)
 
 ### Devices
 
@@ -301,6 +341,16 @@ Yeni kullanıcılar `/register` sayfasından sisteme kayıt olabilir.
 - `GET /api/reports/:id/pdf`
 - `PATCH /api/reports/:id/send-enabiz`
 
+### Messages
+
+- `GET /api/messages?with=:userId` — İki kullanıcı arasındaki mesajlaşma geçmişi
+- `POST /api/messages` — Yeni mesaj gönder
+
+### Notifications
+
+- `GET /api/notifications` — Giriş yapan kullanıcının bildirimleri
+- `PATCH /api/notifications/:id/read` — Bildirimi okundu olarak işaretle
+
 ### Dashboard ve Logs
 
 - `GET /api/dashboard/admin`
@@ -310,6 +360,8 @@ Yeni kullanıcılar `/register` sayfasından sisteme kayıt olabilir.
 - `GET /api/dashboard/patient`
 - `GET /api/audit-logs`
 
+---
+
 ## Veritabanı
 
 Ana modeller:
@@ -317,69 +369,76 @@ Ana modeller:
 - `User`
 - `Patient`
 - `Device`
-- `Appointment`
+- `Appointment` *(doctorId alanı ile doktor ataması)*
 - `ImagingStudy`
 - `StudyFile`
 - `Report`
-- `AuditLog`
+- `ExamRecord`
+- `Prescription`
 - `Notification`
+- `Message`
+- `AuditLog`
 
 ```mermaid
 erDiagram
   User ||--o| Patient : "hasta hesabı"
   Patient ||--o{ Appointment : "randevular"
   Device ||--o{ Appointment : "cihaz randevuları"
+  User ||--o{ Appointment : "atanan doktor"
   Appointment ||--o| ImagingStudy : "çekim"
   ImagingStudy ||--o{ StudyFile : "dosyalar"
   ImagingStudy ||--o| Report : "rapor"
+  ImagingStudy ||--o{ ExamRecord : "muayene kayıtları"
   Patient ||--o{ Report : "raporlar"
+  Patient ||--o{ Prescription : "reçeteler"
   User ||--o{ Report : "doktor"
+  User ||--o{ Message : "gönderilen mesajlar"
+  User ||--o{ Message : "alınan mesajlar"
   User ||--o{ AuditLog : "işlem"
 ```
+
+---
 
 ## PDF Raporlama
 
 PDF raporlar backend tarafında `GET /api/reports/:id/pdf` endpointi ile üretilir.
 
-PDF içinde:
+PDF içinde şunlar yer alır:
 
 - Marka logosu
 - Sistem ve rapor başlığı
-- Hasta adı soyadı
-- Hasta numarası
-- TC kimlik numarası
-- Tetkik türü
-- Cihaz ve oda bilgisi
-- Randevu tarihi
-- Çekim tarihi
-- Doktor/radyolog adı
-- Rapor durumu
-- Onay tarihi
+- Hasta adı soyadı, numarası ve TC kimlik numarası
+- Tetkik türü, cihaz ve oda bilgisi
+- Randevu ve çekim tarihleri
+- Atanan doktor/radyolog adı
+- Rapor durumu ve onay tarihi
 - e-Nabız mock durumu
-- Klinik bilgi
-- Bulgular
-- Sonuç/kanaat
+- Klinik bilgi, bulgular ve sonuç/kanaat
 
-PDF üretiminde Türkçe karakter desteği için sistem fontu gömülür. Windows ortamında Arial fontları kullanılır.
+PDF üretiminde Türkçe karakter desteği için sistem fontu gömülür.
 
 Yetki kuralları:
 
-- Admin onaylı rapor PDF’lerini alabilir.
-- Doktor erişebildiği onaylı raporları alabilir.
-- Hasta yalnızca kendi onaylı raporunu alabilir.
-- Onaylanmamış rapor hasta panelinden PDF olarak alınamaz.
+- Admin: onaylı rapor PDF'lerini alabilir.
+- Doktor: erişebildiği onaylı raporları alabilir.
+- Hasta: yalnızca kendi onaylı raporunu alabilir.
+
+---
 
 ## Güvenlik
 
 - Parolalar `bcryptjs` ile hashlenir.
-- JWT imzası `jose` ile üretilir.
-- Token HTTP-only cookie içinde saklanır.
+- JWT imzası `jose` ile üretilir ve HTTP-only cookie içinde saklanır.
 - Rol bazlı erişim kontrolü hem sayfa hem API seviyesinde uygulanır.
 - Hasta sahipliği kontrolü hasta portalı ve PDF endpointlerinde zorunludur.
 - Prisma ORM kullanıldığı için SQL injection riski düşürülür.
 - Formlar `zod` ile doğrulanır.
-- Pasif kullanıcı giriş yapamaz.
-- Pasif cihaz için randevu oluşturulamaz.
+- 5 başarısız giriş denemesinde hesap 15 dakika kilitlenir.
+- Pasif kullanıcı giriş yapamaz; pasif cihaz için randevu oluşturulamaz.
+- KVKK açık rıza onayı kayıt sırasında zorunludur.
+- Oturum belirli bir süre işlem yapılmazsa otomatik sonlandırılır.
+
+---
 
 ## Test
 
@@ -400,20 +459,33 @@ Kapsanan başlıca senaryolar:
 - Hasta rapor görünürlük sınırı
 - Admin seed verileri
 
+---
+
 ## Klasör Yapısı
 
 ```text
 src/app
-  Next.js sayfaları, layoutlar ve API route handlerları
+  ├── admin/          Admin paneli sayfaları (dashboard, kullanıcılar, cihazlar, raporlar, loglar, istatistikler)
+  ├── secretary/      Sekreter paneli (randevu ve hasta yönetimi)
+  ├── technician/     Tekniker paneli (çekim listesi ve dosya yükleme)
+  ├── doctor/         Doktor paneli (raporlar, hasta listesi ve mesajlaşma)
+  ├── patient/        Hasta portalı (raporlar, tetkikler, reçeteler, bildirimler, randevu talebi)
+  ├── messages/       Personel içi mesajlaşma sayfası
+  └── api/            Tüm API route handlerları
 
 src/components
-  AppShell, SidebarNav, tablo bileşenleri, PDF button, upload form ve ortak UI
+  ├── AppShell, SidebarNav, NotificationBell
+  ├── DoctorPicker                   Randevuya doktor atama bileşeni
+  ├── MessagesClient                 Personel mesajlaşma arayüzü
+  ├── PatientNotificationsClient     Hasta bildirim görüntüleme
+  ├── doctor/DoctorPatientsClient    Doktor hasta listesi ve mesajlaşma
+  └── Ortak UI bileşenleri
 
 src/lib
   Auth, Prisma, validasyon, PDF üretimi, audit, PACS ve e-Nabız servisleri
 
 prisma
-  Prisma schema, migration SQL ve seed scripti
+  Prisma schema, migration SQL'leri ve seed scripti
 
 public/assets
   Logo ve intro görselleri
@@ -428,9 +500,9 @@ tests
   Node test runner ile çalışan otomatik testler
 ```
 
-## Dokümantasyon
+---
 
-Detay dokümanlar:
+## Dokümantasyon
 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - [`docs/API.md`](docs/API.md)
@@ -440,6 +512,8 @@ Detay dokümanlar:
 - [`docs/FUTURE_MOBILE_PLAN.md`](docs/FUTURE_MOBILE_PLAN.md)
 - [`AGENTS.md`](AGENTS.md)
 
+---
+
 ## Varsayımlar
 
 - Gerçek PACS/DICOM viewer bu sürümde yoktur; `src/lib/pacs.ts` entegrasyon hazırlığıdır.
@@ -448,18 +522,22 @@ Detay dokümanlar:
 - Mobil uygulama yapılmamıştır; web arayüz responsive tutulmuştur.
 - PDF üretimi backend endpoint üzerinden yapılır.
 - Marka görseli `public/assets/1.png` dosyasından kullanılır.
-- Intro arka plan görseli `public/assets/The-plague-of-Florence-scaled.jpg` dosyasından kullanılır.
+
+---
 
 ## Gelecek Geliştirmeler
 
 - PostgreSQL production profili
 - Gerçek PACS/DICOMweb viewer entegrasyonu
 - Gerçek e-Nabız servis istemcisi
-- Bildirim, SMS ve e-posta hatırlatma
+- WebSocket tabanlı gerçek zamanlı mesajlaşma
+- SMS ve e-posta hatırlatma bildirimleri
 - Gelişmiş takvim ve slot optimizasyonu
 - Mobil uygulama veya PWA hasta portalı
 - Rol bazlı detaylı raporlama ve performans metrikleri
-- Hastane bilgi sistemi entegrasyonu
+- Hastane bilgi sistemi (HIS) entegrasyonu
+
+---
 
 ## Lisans
 

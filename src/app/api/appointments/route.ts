@@ -11,7 +11,8 @@ const patientAppointmentSchema = z.object({
   examinationType: z.enum(["XRAY", "ULTRASOUND", "MRI", "CT"]),
   preferredDate: z.string().min(1),
   timePreference: z.enum(["MORNING", "AFTERNOON", "EVENING"]),
-  notes: z.string().max(500).optional()
+  notes: z.string().max(500).optional(),
+  doctorId: z.string().optional()
 });
 
 export async function GET() {
@@ -40,10 +41,13 @@ export async function POST(request: Request) {
     const endTime = new Date(preferredDate);
     endTime.setHours(endHour, 0, 0, 0);
 
+    await ensureAppointmentIsAvailable({ patientId: patient.id, deviceId: null, startTime, endTime, doctorId: parsed.data.doctorId });
+
     const appointment = await prisma.appointment.create({
       data: {
         patientId: patient.id,
         deviceId: null,
+        doctorId: parsed.data.doctorId,
         examinationType: parsed.data.examinationType,
         appointmentDate: preferredDate,
         startTime,
@@ -64,11 +68,12 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   const startTime = combineDateAndTime(parsed.data.appointmentDate, parsed.data.startTime);
   const endTime = combineDateAndTime(parsed.data.appointmentDate, parsed.data.endTime);
-  await ensureAppointmentIsAvailable({ patientId: parsed.data.patientId, deviceId: parsed.data.deviceId, startTime, endTime });
+  await ensureAppointmentIsAvailable({ patientId: parsed.data.patientId, deviceId: parsed.data.deviceId, startTime, endTime, doctorId: parsed.data.doctorId });
   const appointment = await prisma.appointment.create({
     data: {
       patientId: parsed.data.patientId,
       deviceId: parsed.data.deviceId,
+      doctorId: parsed.data.doctorId,
       examinationType: parsed.data.examinationType,
       appointmentDate: new Date(`${parsed.data.appointmentDate}T00:00:00`),
       startTime,

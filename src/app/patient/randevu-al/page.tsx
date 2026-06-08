@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarPlus, Loader2 } from "lucide-react";
+import dynamic from "next/dynamic";
+const DoctorPicker = dynamic(() => import("@/components/DoctorPicker"), { ssr: false });
 
 const examTypes = [
   { value: "MRI", label: "MR (Manyetik Rezonans)" },
@@ -28,6 +30,7 @@ export default function RandevuAlPage() {
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState<string | undefined>(undefined);
 
   function set(field: keyof FormState) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -49,7 +52,7 @@ export default function RandevuAlPage() {
     const res = await fetch("/api/appointments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ examinationType: form.examinationType, preferredDate: form.preferredDate, timePreference: form.timePreference, notes: form.notes || undefined })
+      body: JSON.stringify({ examinationType: form.examinationType, preferredDate: form.preferredDate, timePreference: form.timePreference, notes: form.notes || undefined, doctorId: selectedDoctor || undefined })
     });
     const data = await res.json();
     setLoading(false);
@@ -109,6 +112,10 @@ export default function RandevuAlPage() {
                 {timePreferences.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
               {errors.timePreference && <p className="mt-1 text-sm text-[#7B1E3A]">{errors.timePreference}</p>}
+            </div>
+
+            <div>
+              <DoctorPicker value={selectedDoctor} onChange={setSelectedDoctor} date={form.preferredDate} timePreference={form.timePreference} />
             </div>
 
             <div>

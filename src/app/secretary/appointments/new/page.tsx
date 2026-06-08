@@ -8,6 +8,7 @@ export default async function NewAppointmentPage() {
     prisma.patient.findMany({ orderBy: { createdAt: "desc" } }),
     prisma.device.findMany({ where: { isActive: true, status: "ACTIVE" }, orderBy: { name: "asc" } })
   ]);
+  const doctors = await prisma.user.findMany({ where: { role: "DOCTOR", isActive: true }, orderBy: { name: "asc" } });
   return (
     <div className="space-y-6">
       <PageHeader title="Randevu Oluştur" description="Uygun cihaz ve zaman slotu seçin. Çakışmalar sunucuda engellenir." />
@@ -15,6 +16,7 @@ export default async function NewAppointmentPage() {
         <form action={createAppointmentAction} className="grid gap-4 md:grid-cols-2">
           <Select label="Hasta" name="patientId">{patients.map((patient) => <option key={patient.id} value={patient.id}>{patient.patientNumber} - {patient.firstName} {patient.lastName}</option>)}</Select>
           <Select label="Cihaz / Oda" name="deviceId">{devices.map((device) => <option key={device.id} value={device.id}>{device.name} / Oda {device.roomNumber}</option>)}</Select>
+          <Select label="Doktor (isteğe bağlı)" name="doctorId">{doctors.map((d) => <option key={d.id} value={d.id}>{d.name} {d.surname}</option>)}</Select>
           <Select label="Tetkik Türü" name="examinationType">{Object.entries(deviceTypeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</Select>
           <Field label="Randevu Tarihi" name="appointmentDate" type="date" />
           <Field label="Başlangıç Saati" name="startTime" type="time" />

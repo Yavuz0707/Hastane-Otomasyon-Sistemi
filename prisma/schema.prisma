@@ -76,22 +76,23 @@ enum ReportStatus {
 }
 
 model User {
-  id             String        @id @default(cuid())
-  name           String
-  surname        String
-  email          String        @unique
-  passwordHash   String
-  role           Role
-  isActive       Boolean       @default(true)
-  tcKimlikNo     String?       @unique
-  loginAttempts  Int           @default(0)
-  lockedUntil    DateTime?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  createdAppointments Appointment[] @relation("CreatedAppointments")
+  id                   String         @id @default(cuid())
+  name                 String
+  surname              String
+  email                String         @unique
+  passwordHash         String
+  role                 Role
+  isActive             Boolean        @default(true)
+  tcKimlikNo           String?        @unique
+  loginAttempts        Int            @default(0)
+  lockedUntil          DateTime?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  createdAppointments  Appointment[]  @relation("CreatedAppointments")
   technicianStudies    ImagingStudy[] @relation("TechnicianStudies")
-  doctorReports        Report[]      @relation("DoctorReports")
-  uploadedFiles        StudyFile[]   @relation("UploadedFiles")
+  doctorReports        Report[]       @relation("DoctorReports")
+  appointmentsAsDoctor Appointment[]
+  uploadedFiles        StudyFile[]    @relation("UploadedFiles")
   auditLogs            AuditLog[]
   notifications        Notification[]
   patientProfile       Patient?
@@ -100,10 +101,10 @@ model User {
 }
 
 model Patient {
-  id             String        @id @default(cuid())
-  userId         String?       @unique
-  user           User?         @relation(fields: [userId], references: [id])
-  nationalId     String        @unique
+  id             String         @id @default(cuid())
+  userId         String?        @unique
+  user           User?          @relation(fields: [userId], references: [id])
+  nationalId     String         @unique
   firstName      String
   lastName       String
   birthDate      DateTime
@@ -112,9 +113,9 @@ model Patient {
   email          String
   address        String
   bloodGroup     String?
-  patientNumber  String        @unique
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  patientNumber  String         @unique
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   appointments   Appointment[]
   imagingStudies ImagingStudy[]
   reports        Report[]
@@ -123,15 +124,15 @@ model Patient {
 }
 
 model Device {
-  id             String        @id @default(cuid())
+  id             String         @id @default(cuid())
   name           String
   type           DeviceType
   roomNumber     String
-  status         DeviceStatus  @default(ACTIVE)
-  isActive       Boolean       @default(true)
+  status         DeviceStatus   @default(ACTIVE)
+  isActive       Boolean        @default(true)
   description    String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   appointments   Appointment[]
   imagingStudies ImagingStudy[]
 }
@@ -139,6 +140,7 @@ model Device {
 model Appointment {
   id              String            @id @default(cuid())
   patientId       String
+  doctorId        String?
   deviceId        String?
   examinationType ExaminationType
   appointmentDate DateTime
@@ -151,6 +153,7 @@ model Appointment {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   patient         Patient           @relation(fields: [patientId], references: [id])
+  doctor          User?             @relation(fields: [doctorId], references: [id])
   device          Device?           @relation(fields: [deviceId], references: [id])
   createdBy       User              @relation("CreatedAppointments", fields: [createdById], references: [id])
   imagingStudy    ImagingStudy?
@@ -238,18 +241,18 @@ model Notification {
 }
 
 model ExamRecord {
-  id          String       @id @default(cuid())
-  patientId   String
-  doctorId    String
-  studyId     String?      @unique
-  complaint   String
-  diagnosis   String
-  notes       String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  patient     Patient      @relation(fields: [patientId], references: [id])
-  doctor      User         @relation(fields: [doctorId], references: [id])
-  study       ImagingStudy? @relation(fields: [studyId], references: [id])
+  id            String         @id @default(cuid())
+  patientId     String
+  doctorId      String
+  studyId       String?        @unique
+  complaint     String
+  diagnosis     String
+  notes         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  patient       Patient        @relation(fields: [patientId], references: [id])
+  doctor        User           @relation(fields: [doctorId], references: [id])
+  study         ImagingStudy?  @relation(fields: [studyId], references: [id])
   prescriptions Prescription[]
 }
 

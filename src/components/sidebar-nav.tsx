@@ -17,6 +17,7 @@ import {
   User,
   UserCog,
   UserPlus,
+  Bell,
   Users
 } from "lucide-react";
 
@@ -32,6 +33,7 @@ const iconMap = {
   monitor: MonitorCog,
   pill: Pill,
   stethoscope: Stethoscope,
+  bell: Bell,
   user: User,
   userCog: UserCog,
   userPlus: UserPlus,

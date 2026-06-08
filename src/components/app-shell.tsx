@@ -17,6 +17,7 @@ const navItems: Record<Role, { href: string; label: string; icon: SidebarIconKey
     { href: "/admin/dashboard", label: "Dashboard", icon: "dashboard" },
     { href: "/admin/users", label: "Kullanıcılar", icon: "users" },
     { href: "/admin/rol-atama", label: "Rol Atama", icon: "userCog" },
+    { href: "/messages", label: "Mesajlar", icon: "users" },
     { href: "/admin/devices", label: "Cihaz / Oda", icon: "monitor" },
     { href: "/admin/appointments", label: "Randevular", icon: "calendar" },
     { href: "/admin/reports", label: "Raporlar", icon: "file" },
@@ -26,6 +27,7 @@ const navItems: Record<Role, { href: string; label: string; icon: SidebarIconKey
   ],
   SECRETARY: [
     { href: "/secretary/dashboard", label: "Dashboard", icon: "dashboard" },
+    { href: "/messages", label: "Mesajlar", icon: "users" },
     { href: "/secretary/patients", label: "Hasta Listesi", icon: "users" },
     { href: "/secretary/patients/new", label: "Hasta Kayıt", icon: "userPlus" },
     { href: "/secretary/appointments", label: "Randevular", icon: "calendar" },
@@ -36,11 +38,14 @@ const navItems: Record<Role, { href: string; label: string; icon: SidebarIconKey
   ],
   TECHNICIAN: [
     { href: "/technician/dashboard", label: "Dashboard", icon: "dashboard" },
+    { href: "/messages", label: "Mesajlar", icon: "users" },
     { href: "/technician/studies", label: "Günlük Çekimler", icon: "activity" },
     { href: "/technician/yardim", label: "Yardım", icon: "helpCircle" }
   ],
   DOCTOR: [
     { href: "/doctor/dashboard", label: "Dashboard", icon: "dashboard" },
+    { href: "/doctor/patients", label: "Hastalarım", icon: "users" },
+    { href: "/messages", label: "Mesajlar", icon: "users" },
     { href: "/doctor/pending-reports", label: "Rapor Bekleyenler", icon: "stethoscope" },
     { href: "/doctor/reports/drafts", label: "Taslaklar", icon: "clipboard" },
     { href: "/doctor/reports/approved", label: "Onaylı Raporlar", icon: "file" },
@@ -48,6 +53,7 @@ const navItems: Record<Role, { href: string; label: string; icon: SidebarIconKey
   ],
   PATIENT: [
     { href: "/patient/dashboard", label: "Dashboard", icon: "dashboard" },
+    { href: "/patient/notifications", label: "Bildirimler", icon: "bell" },
     { href: "/patient/randevu-al", label: "Randevu Al", icon: "calendarPlus" },
     { href: "/patient/appointments", label: "Randevularım", icon: "calendar" },
     { href: "/patient/studies", label: "Tetkiklerim", icon: "activity" },
@@ -69,6 +75,7 @@ export async function AppShell({ children, allowedRoles }: { children: React.Rea
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   if (!allowedRoles.includes(user.role)) redirect("/unauthorized");
+  const mainClass = user.role === "DOCTOR" ? "px-4 py-6 md:px-8" : "mx-auto max-w-7xl px-4 py-6 md:px-8";
 
   return (
     <div className="min-h-screen bg-cream-bg text-stone-950">
@@ -114,7 +121,7 @@ export async function AppShell({ children, allowedRoles }: { children: React.Rea
             </div>
           </div>
         </header>
-        <main className="mx-auto max-w-7xl px-4 py-6 md:px-8">{children}</main>
+        <main className={mainClass}>{children}</main>
       </div>
       <SessionWatcher />
     </div>

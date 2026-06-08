@@ -101,6 +101,7 @@ export async function createAppointmentAction(formData: FormData) {
   const parsed = appointmentSchema.parse({
     patientId: asString(formData, "patientId"),
     deviceId: asString(formData, "deviceId"),
+    doctorId: asString(formData, "doctorId") || undefined,
     examinationType: asString(formData, "examinationType"),
     appointmentDate: asString(formData, "appointmentDate"),
     startTime: asString(formData, "startTime"),
@@ -110,11 +111,12 @@ export async function createAppointmentAction(formData: FormData) {
   });
   const startTime = combineDateAndTime(parsed.appointmentDate, parsed.startTime);
   const endTime = combineDateAndTime(parsed.appointmentDate, parsed.endTime);
-  await ensureAppointmentIsAvailable({ patientId: parsed.patientId, deviceId: parsed.deviceId, startTime, endTime });
+  await ensureAppointmentIsAvailable({ patientId: parsed.patientId, deviceId: parsed.deviceId, startTime, endTime, doctorId: parsed.doctorId });
   const appointment = await prisma.appointment.create({
     data: {
       patientId: parsed.patientId,
       deviceId: parsed.deviceId,
+      doctorId: parsed.doctorId,
       examinationType: parsed.examinationType,
       appointmentDate: new Date(`${parsed.appointmentDate}T00:00:00`),
       startTime,
@@ -153,15 +155,18 @@ export async function updateAppointmentStatusAction(formData: FormData) {
             ? ImagingStatus.REPORT_PENDING
             : undefined;
   if (studyStatus) {
-    await prisma.imagingStudy.update({
-      where: { appointmentId: id },
-      data: {
-        status: studyStatus,
-        technicianId: actor.role === "TECHNICIAN" ? actor.id : undefined,
-        startedAt: studyStatus === ImagingStatus.STARTED ? new Date() : undefined,
-        completedAt: studyStatus === ImagingStatus.COMPLETED ? new Date() : undefined
-      }
-    });
+    const existingStudy = await prisma.imagingStudy.findUnique({ where: { appointmentId: id } });
+    if (existingStudy) {
+      await prisma.imagingStudy.update({
+        where: { appointmentId: id },
+        data: {
+          status: studyStatus,
+          technicianId: actor.role === "TECHNICIAN" ? actor.id : undefined,
+          startedAt: studyStatus === ImagingStatus.STARTED ? new Date() : undefined,
+          completedAt: studyStatus === ImagingStatus.COMPLETED ? new Date() : undefined
+        }
+      });
+    }
   }
   await writeAuditLog({ userId: actor.id, action: "APPOINTMENT_STATUS_CHANGED", entityType: "Appointment", entityId: id, description: `Randevu durumu ${status} yapıldı.` });
   revalidatePath("/secretary/appointments");

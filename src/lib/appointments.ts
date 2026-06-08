@@ -11,6 +11,7 @@ export async function ensureAppointmentIsAvailable(input: {
   deviceId: string;
   startTime: Date;
   endTime: Date;
+  doctorId?: string | null;
   ignoreAppointmentId?: string;
 }) {
   if (input.startTime >= input.endTime) {
@@ -30,9 +31,15 @@ export async function ensureAppointmentIsAvailable(input: {
     prisma.device.findUnique({ where: { id: input.deviceId } })
   ]);
 
+  let doctorConflict = null;
+  if (input.doctorId) {
+    doctorConflict = await prisma.appointment.findFirst({ where: { ...baseWhere, doctorId: input.doctorId } });
+  }
+
   if (!device || !device.isActive || device.status !== "ACTIVE") {
     throw new Error("Pasif veya bakımda olan cihaz için randevu oluşturulamaz.");
   }
   if (deviceConflict) throw new Error("Seçilen cihaz bu saat aralığında dolu.");
   if (patientConflict) throw new Error("Hasta bu saat aralığında başka bir randevuya atanmış.");
+  if (doctorConflict) throw new Error("Seçilen doktor bu saat aralığında dolu.");
 }

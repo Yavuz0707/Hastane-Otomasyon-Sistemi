@@ -24,6 +24,7 @@ export const patientSchema = z.object({
 
 export const appointmentSchema = z.object({
   patientId: z.string().min(1),
+  doctorId: z.string().optional(),
   deviceId: z.string().min(1),
   examinationType: z.enum(["XRAY", "ULTRASOUND", "MRI", "CT"]),
   appointmentDate: z.string().min(1),
