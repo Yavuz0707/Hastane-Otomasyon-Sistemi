@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   MonitorCog,
   Stethoscope,
+  UserCog,
   UserPlus,
   Users
 } from "lucide-react";
@@ -24,6 +25,7 @@ const iconMap = {
   dashboard: LayoutDashboard,
   monitor: MonitorCog,
   stethoscope: Stethoscope,
+  userCog: UserCog,
   userPlus: UserPlus,
   users: Users
 };

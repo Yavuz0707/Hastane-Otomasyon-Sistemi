@@ -7,6 +7,18 @@ Tüm korumalı endpointler JWT cookie ister. Yetkisiz erişim `401`, rol hatası
 - `POST /api/auth/login`: `{ email, password }`
 - `POST /api/auth/logout`
 - `GET /api/auth/me`
+- `POST /api/auth/register`: `{ adSoyad, email, tcKimlikNo, password, passwordConfirm }` — Doğrulama gerektirmez. Kullanıcıyı `PATIENT` rolü ve `isActive: false` ile oluşturur. JWT cookie set etmez. 201 döner.
+
+## Admin — Rol Atama
+
+- `GET /api/admin/rol-atama`: Admin. Tüm kullanıcıları döndürür (şifre hariç).
+- `PATCH /api/admin/rol-atama`: Admin. `{ userId, role }` — Kullanıcının rolünü günceller. Admin kendi rolünü değiştiremez (403).
+- `PATCH /api/admin/rol-atama/aktif`: Admin. `{ userId }` — Kullanıcıyı `isActive: true` yapar.
+
+## Bildirimler
+
+- `GET /api/notifications`: Giriş yapan kullanıcıya ait son 20 bildirimi ve okunmamış sayısını döndürür. `{ notifications: [...], unreadCount: number }`
+- `PATCH /api/notifications/read`: `{ notificationId: string }` — tek bildirimi okundu yapar. `{ all: true }` — tüm bildirimleri okundu yapar. Kullanıcı başkasının bildirimini okuyamaz (404).
 
 ## Users
 

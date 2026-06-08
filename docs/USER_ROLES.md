@@ -19,3 +19,9 @@ Rapor bekleyen tetkikleri açar, hasta geçmişini ve dosyaları görür, rapor 
 ## Hasta
 
 Sadece kendi randevularını, tetkik durumlarını ve onaylanmış raporlarını görür. Başka hasta verisine, admin, sekreter, tekniker veya doktor panellerine erişemez.
+
+## Kayıt Akışı
+
+Yeni kullanıcılar `/register` sayfasından kayıt olabilir. Kayıt olan kullanıcılar otomatik olarak **PATIENT** rolüyle ve **`isActive: false`** durumunda oluşturulur. `isActive: false` olan kullanıcılar sisteme giriş yapamaz; `getCurrentUser()` bu kullanıcılar için `null` döndürür.
+
+Admin, `/admin/rol-atama` sayfasından pasif kullanıcıları görüp rol atayabilir ve "Aktif Et" ile hesabı açabilir. Kullanıcı aktif edildikten sonra giriş yapabilir.

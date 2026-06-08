@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { validateTCKimlik } from "@/lib/validations/tc-kimlik";
 
 export const loginSchema = z.object({
   email: z.string().email("Geçerli e-posta girin"),
@@ -6,7 +7,11 @@ export const loginSchema = z.object({
 });
 
 export const patientSchema = z.object({
-  nationalId: z.string().regex(/^\d{11}$/, "TC kimlik 11 haneli olmalı"),
+  nationalId: z
+    .string()
+    .length(11, "TC kimlik numarası 11 hane olmalıdır")
+    .regex(/^\d+$/, "TC kimlik numarası yalnızca rakam içermelidir")
+    .refine(validateTCKimlik, { message: "Geçersiz TC kimlik numarası" }),
   firstName: z.string().min(2),
   lastName: z.string().min(2),
   birthDate: z.string().min(1),

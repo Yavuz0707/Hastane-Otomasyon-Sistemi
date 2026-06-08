@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Activity, CalendarCheck, FileText, Layers, Loader2, LockKeyhole, ShieldCheck } from "lucide-react";
 
 const demoUsers = [
@@ -115,7 +116,14 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="mt-6 grid gap-2">
+            <p className="mt-5 text-center text-sm text-stone-500">
+              Hesabın yok mu?{" "}
+              <Link href="/register" className="font-semibold text-[#7B1E3A] hover:text-[#4A0F24]">
+                Kayıt ol
+              </Link>
+            </p>
+
+            <div className="mt-4 grid gap-2">
               {demoUsers.map(([label, demoEmail, demoPassword]) => (
                 <button
                   key={demoEmail}

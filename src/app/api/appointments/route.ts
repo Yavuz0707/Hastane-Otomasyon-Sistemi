@@ -4,6 +4,7 @@ import { requireApiUser } from "@/lib/auth";
 import { appointmentSchema } from "@/lib/validators";
 import { combineDateAndTime, ensureAppointmentIsAvailable } from "@/lib/appointments";
 import { writeAuditLog } from "@/lib/audit";
+import { createNotificationForRole } from "@/lib/notifications";
 
 export async function GET() {
   const { error } = await requireApiUser(["ADMIN", "SECRETARY", "TECHNICIAN", "DOCTOR"]);
@@ -35,5 +36,6 @@ export async function POST(request: Request) {
     }
   });
   await writeAuditLog({ userId: user.id, action: "APPOINTMENT_CREATED", entityType: "Appointment", entityId: appointment.id, description: "Randevu API ile oluşturuldu." });
+  await createNotificationForRole({ role: "TECHNICIAN", title: "Yeni Randevu", message: "Yeni bir çekim randevusu planlandı.", type: "NEW_APPOINTMENT", link: "/technician/dashboard" });
   return NextResponse.json({ appointment }, { status: 201 });
 }

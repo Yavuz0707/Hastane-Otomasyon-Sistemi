@@ -91,6 +91,7 @@ Kullanılan ana renkler:
 - **Audit log:** Kritik işlemlerin denetlenebilir kaydı.
 - **PACS/DICOM hazırlığı:** Gerçek entegrasyon için servis katmanı.
 - **e-Nabız mock:** Onaylı raporlar için simülasyon gönderim alanı.
+- **Gerçek zamanlı bildirim sistemi:** Rapor onayı, çekim tamamlama, yeni randevu ve kullanıcı kaydı gibi olaylar için rol bazlı bildirimler; header'daki zil ikonu ile anlık erişim.
 - **Premium dashboard UI:** Wine red ve champagne temalı responsive arayüz.
 
 ## Roller ve Paneller
@@ -213,6 +214,17 @@ Notlar:
 | Tekniker | `tekniker@radyoloji.local` | `Tekniker123!` |
 | Doktor | `doktor@radyoloji.local` | `Doktor123!` |
 | Hasta | `hasta@radyoloji.local` | `Hasta123!` |
+
+## Kayıt Akışı
+
+Yeni kullanıcılar `/register` sayfasından sisteme kayıt olabilir.
+
+| Adım | Açıklama |
+| --- | --- |
+| 1. Kayıt | Kullanıcı ad soyad, e-posta, TC kimlik no ve şifre girer. TC kimlik numarası Türkiye kimlik algoritmasıyla doğrulanır. |
+| 2. Hesap oluşturma | Sistem kullanıcıyı `PATIENT` rolüyle ve `isActive: false` durumunda kaydeder. JWT cookie set edilmez, giriş yapılamaz. |
+| 3. Admin onayı | Admin `/admin/rol-atama` sayfasında pasif kullanıcıyı görür, isterse rolünü değiştirir ve "Aktif Et" ile hesabı açar. |
+| 4. Giriş | Kullanıcı artık `/login` sayfasından giriş yapabilir. |
 
 ## Komutlar
 

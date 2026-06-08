@@ -9,11 +9,13 @@ import {
 import { authCookieName, getCurrentUser } from "@/lib/auth";
 import { roleLabels } from "@/lib/labels";
 import { SidebarNav, type SidebarIconKey } from "@/components/sidebar-nav";
+import { NotificationBell } from "@/components/NotificationBell";
 
 const navItems: Record<Role, { href: string; label: string; icon: SidebarIconKey }[]> = {
   ADMIN: [
     { href: "/admin/dashboard", label: "Dashboard", icon: "dashboard" },
     { href: "/admin/users", label: "Kullanıcılar", icon: "users" },
+    { href: "/admin/rol-atama", label: "Rol Atama", icon: "userCog" },
     { href: "/admin/devices", label: "Cihaz / Oda", icon: "monitor" },
     { href: "/admin/appointments", label: "Randevular", icon: "calendar" },
     { href: "/admin/reports", label: "Raporlar", icon: "file" },
@@ -92,6 +94,7 @@ export async function AppShell({ children, allowedRoles }: { children: React.Rea
                   );
                 })}
               </div>
+              <NotificationBell />
               <form action={logoutAction}>
                 <button className="btn-secondary" type="submit">
                   <LogOut className="h-4 w-4" aria-hidden="true" />
