@@ -5,6 +5,8 @@ import { deviceTypeLabels, reportStatusLabels } from "@/lib/labels";
 import { Badge, Card, PageHeader } from "@/components/ui";
 import { AppointmentsTable, ReportsTable, formatDateTime } from "@/components/tables";
 import { PdfButton } from "@/components/pdf-button";
+import { ExamRecordPanel } from "@/components/doctor/ExamRecordPanel";
+import { PrescriptionPanel } from "@/components/doctor/PrescriptionPanel";
 
 export default async function DoctorStudyDetailPage({ params }: { params: { id: string } }) {
   const study = await prisma.imagingStudy.findUnique({
@@ -19,10 +21,13 @@ export default async function DoctorStudyDetailPage({ params }: { params: { id: 
       device: true,
       appointment: true,
       files: true,
-      report: true
+      report: true,
+      examRecord: { include: { doctor: true, prescriptions: true } }
     }
   });
   if (!study) notFound();
+
+  const existingPrescription = study.examRecord?.prescriptions?.[0] ?? null;
 
   return (
     <div className="space-y-6">
@@ -52,9 +57,33 @@ export default async function DoctorStudyDetailPage({ params }: { params: { id: 
           <h2 className="text-lg font-semibold text-wine-900">Tetkik Bilgisi</h2>
           <div className="mt-4 space-y-2 text-sm">
             <p><strong>Hasta No:</strong> {study.patient.patientNumber}</p>
-            <p><strong>Cihaz:</strong> {study.device.name}</p>
+            <p><strong>Cihaz:</strong> {study.device?.name ?? "Atanmadı"}</p>
             <p><strong>Çekim Tarihi:</strong> {formatDateTime(study.appointment.startTime)}</p>
             <p><strong>Mevcut Rapor:</strong> {study.report ? <Badge value={study.report.status} label={reportStatusLabels[study.report.status]} /> : "Yok"}</p>
+          </div>
+          <div className="mt-5 space-y-0">
+            <ExamRecordPanel
+              patientId={study.patientId}
+              studyId={study.id}
+              existingRecord={study.examRecord ? {
+                id: study.examRecord.id,
+                complaint: study.examRecord.complaint,
+                diagnosis: study.examRecord.diagnosis,
+                notes: study.examRecord.notes,
+                createdAt: study.examRecord.createdAt,
+                doctor: study.examRecord.doctor
+              } : null}
+            />
+            <PrescriptionPanel
+              patientId={study.patientId}
+              examRecordId={study.examRecord?.id}
+              existingPrescription={existingPrescription ? {
+                id: existingPrescription.id,
+                prescriptionNo: existingPrescription.prescriptionNo,
+                createdAt: existingPrescription.createdAt,
+                medications: existingPrescription.medications
+              } : null}
+            />
           </div>
         </Card>
       </div>

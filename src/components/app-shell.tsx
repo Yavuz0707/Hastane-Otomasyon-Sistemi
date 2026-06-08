@@ -43,9 +43,12 @@ const navItems: Record<Role, { href: string; label: string; icon: SidebarIconKey
   ],
   PATIENT: [
     { href: "/patient/dashboard", label: "Dashboard", icon: "dashboard" },
+    { href: "/patient/randevu-al", label: "Randevu Al", icon: "calendarPlus" },
     { href: "/patient/appointments", label: "Randevularım", icon: "calendar" },
     { href: "/patient/studies", label: "Tetkiklerim", icon: "activity" },
-    { href: "/patient/reports", label: "Raporlarım", icon: "file" }
+    { href: "/patient/reports", label: "Raporlarım", icon: "file" },
+    { href: "/patient/muayene-gecmisi", label: "Muayene Geçmişi", icon: "stethoscope" },
+    { href: "/patient/recetelerim", label: "Reçetelerim", icon: "pill" }
   ]
 };
 

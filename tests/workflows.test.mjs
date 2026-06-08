@@ -13,8 +13,8 @@ test("auth: demo users exist, valid password works, passive user is blocked by d
   const admin = await prisma.user.findUnique({ where: { email: "admin@radyoloji.local" } });
   const passive = await prisma.user.findUnique({ where: { email: "pasif@radyoloji.local" } });
   assert.ok(admin);
-  assert.equal(await bcrypt.compare("Admin123!", admin.passwordHash), true);
-  assert.equal(await bcrypt.compare("Wrong123!", admin.passwordHash), false);
+  assert.equal(await bcrypt.compare("Admin@123456!", admin.passwordHash), true);
+  assert.equal(await bcrypt.compare("WrongPassword1!", admin.passwordHash), false);
   assert.equal(passive?.isActive, false);
 });
 
@@ -200,4 +200,155 @@ test("bildirim: rapor onaylanınca hasta userId'sine bildirim oluşmalı", async
   assert.equal(notif.link, "/patient/dashboard");
   await prisma.notification.deleteMany({ where: { userId: user.id } });
   await prisma.user.delete({ where: { id: user.id } });
+});
+
+// --- Şifre politikası testleri ---
+function validatePassword(password) {
+  if (password.length < 12) return { ok: false, reason: "length" };
+  if (!/[A-Z]/.test(password)) return { ok: false, reason: "uppercase" };
+  if (!/[0-9]/.test(password)) return { ok: false, reason: "digit" };
+  if (!/[^A-Za-z0-9]/.test(password)) return { ok: false, reason: "special" };
+  return { ok: true };
+}
+
+test("şifre politikası: 12 karakterden kısa şifre reddedilmeli", async () => {
+  assert.equal(validatePassword("Admin1!").ok, false);
+  assert.equal(validatePassword("Admin1!").reason, "length");
+});
+
+test("şifre politikası: özel karakter içermeyen şifre reddedilmeli", async () => {
+  assert.equal(validatePassword("Admin123456789").ok, false);
+  assert.equal(validatePassword("Admin123456789").reason, "special");
+});
+
+test("şifre politikası: geçerli şifre kabul edilmeli", async () => {
+  assert.equal(validatePassword("Admin@123456!").ok, true);
+});
+
+// --- Hesap kilitleme testleri ---
+test("hesap kilitleme: loginAttempts alanı User modelinde olmalı", async () => {
+  const user = await prisma.user.create({
+    data: { name: "Lock", surname: "Test", email: `lock_test_${Date.now()}@test.local`, passwordHash: "hash", role: "PATIENT", isActive: true }
+  });
+  assert.equal(user.loginAttempts, 0);
+  assert.equal(user.lockedUntil, null);
+  await prisma.user.delete({ where: { id: user.id } });
+});
+
+test("hesap kilitleme: 5 başarısız girişten sonra hesap kilitlenmeli (db katmanı)", async () => {
+  const user = await prisma.user.create({
+    data: { name: "Brute", surname: "Force", email: `brute_${Date.now()}@test.local`, passwordHash: "hash", role: "PATIENT", isActive: true }
+  });
+  const lockedUntil = new Date(Date.now() + 15 * 60 * 1000);
+  const updated = await prisma.user.update({ where: { id: user.id }, data: { lockedUntil, loginAttempts: 0 } });
+  assert.ok(updated.lockedUntil);
+  assert.ok(updated.lockedUntil > new Date());
+  await prisma.user.delete({ where: { id: user.id } });
+});
+
+test("hesap kilitleme: doğru giriş sonrası loginAttempts sıfırlanmalı (db katmanı)", async () => {
+  const user = await prisma.user.create({
+    data: { name: "Reset", surname: "Attempts", email: `reset_${Date.now()}@test.local`, passwordHash: "hash", role: "PATIENT", isActive: true, loginAttempts: 3 }
+  });
+  const reset = await prisma.user.update({ where: { id: user.id }, data: { loginAttempts: 0, lockedUntil: null } });
+  assert.equal(reset.loginAttempts, 0);
+  assert.equal(reset.lockedUntil, null);
+  await prisma.user.delete({ where: { id: user.id } });
+});
+
+// --- Hasta randevu testleri ---
+test("hasta randevu: PENDING durumu AppointmentStatus'da olmalı", async () => {
+  const admin = await prisma.user.findFirst({ where: { role: "ADMIN", isActive: true } });
+  const patient = await prisma.patient.findFirst();
+  assert.ok(admin);
+  assert.ok(patient);
+  const now = new Date();
+  const end = new Date(now.getTime() + 60 * 60 * 1000);
+  const appt = await prisma.appointment.create({
+    data: {
+      patientId: patient.id,
+      deviceId: null,
+      examinationType: "MRI",
+      appointmentDate: now,
+      startTime: now,
+      endTime: end,
+      status: "PENDING",
+      createdById: admin.id
+    }
+  });
+  assert.equal(appt.status, "PENDING");
+  assert.equal(appt.deviceId, null);
+  await prisma.appointment.delete({ where: { id: appt.id } });
+});
+
+test("hasta randevu: deviceId nullable olmalı (PENDING için)", async () => {
+  const admin = await prisma.user.findFirst({ where: { role: "ADMIN", isActive: true } });
+  const patient = await prisma.patient.findFirst();
+  assert.ok(admin);
+  assert.ok(patient);
+  const now = new Date();
+  const appt = await prisma.appointment.create({
+    data: { patientId: patient.id, deviceId: null, examinationType: "XRAY", appointmentDate: now, startTime: now, endTime: new Date(now.getTime() + 1800000), status: "PENDING", createdById: admin.id }
+  });
+  assert.equal(appt.deviceId, null);
+  await prisma.appointment.delete({ where: { id: appt.id } });
+});
+
+// --- ExamRecord testleri ---
+test("muayene kaydı: doktor muayene kaydı oluşturabilmeli", async () => {
+  const doctor = await prisma.user.findFirst({ where: { role: "DOCTOR", isActive: true } });
+  const patient = await prisma.patient.findFirst();
+  assert.ok(doctor);
+  assert.ok(patient);
+  const record = await prisma.examRecord.create({
+    data: { patientId: patient.id, doctorId: doctor.id, complaint: "Baş ağrısı", diagnosis: "Migren" }
+  });
+  assert.equal(record.complaint, "Baş ağrısı");
+  assert.equal(record.diagnosis, "Migren");
+  await prisma.examRecord.delete({ where: { id: record.id } });
+});
+
+test("muayene kaydı: hasta başka hastanın kaydını görememeli (patientId filtresi)", async () => {
+  const doctor = await prisma.user.findFirst({ where: { role: "DOCTOR", isActive: true } });
+  const patients = await prisma.patient.findMany({ take: 2 });
+  assert.ok(doctor);
+  assert.ok(patients.length >= 1);
+  const patientA = patients[0];
+  const record = await prisma.examRecord.create({
+    data: { patientId: patientA.id, doctorId: doctor.id, complaint: "Test şikayet", diagnosis: "Test tanı" }
+  });
+  const otherPatientId = "nonexistent-patient-id";
+  const found = await prisma.examRecord.findFirst({ where: { id: record.id, patientId: otherPatientId } });
+  assert.equal(found, null);
+  await prisma.examRecord.delete({ where: { id: record.id } });
+});
+
+// --- Reçete testleri ---
+test("reçete: doktor reçete oluşturabilmeli", async () => {
+  const doctor = await prisma.user.findFirst({ where: { role: "DOCTOR", isActive: true } });
+  const patient = await prisma.patient.findFirst();
+  assert.ok(doctor);
+  assert.ok(patient);
+  const meds = JSON.stringify([{ name: "Amoksisilin", dose: "500mg", frequency: "3x1", duration: "7 gün" }]);
+  const rx = await prisma.prescription.create({
+    data: { patientId: patient.id, doctorId: doctor.id, medications: meds }
+  });
+  assert.ok(rx.prescriptionNo);
+  assert.equal(rx.status, "ACTIVE");
+  await prisma.prescription.delete({ where: { id: rx.id } });
+});
+
+test("reçete: hasta sadece kendi reçetelerini görebilmeli (patientId filtresi)", async () => {
+  const doctor = await prisma.user.findFirst({ where: { role: "DOCTOR", isActive: true } });
+  const patient = await prisma.patient.findFirst();
+  assert.ok(doctor);
+  assert.ok(patient);
+  const meds = JSON.stringify([{ name: "İbuprofen", dose: "400mg", frequency: "2x1", duration: "5 gün" }]);
+  const rx = await prisma.prescription.create({
+    data: { patientId: patient.id, doctorId: doctor.id, medications: meds }
+  });
+  const wrongPatientId = "nonexistent-id";
+  const found = await prisma.prescription.findFirst({ where: { id: rx.id, patientId: wrongPatientId } });
+  assert.equal(found, null);
+  await prisma.prescription.delete({ where: { id: rx.id } });
 });

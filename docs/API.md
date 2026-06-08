@@ -63,6 +63,24 @@ Tüm korumalı endpointler JWT cookie ister. Yetkisiz erişim `401`, rol hatası
 - `GET /api/reports/:id/pdf`: Onaylı raporu `application/pdf` olarak döndürür. Hasta sadece kendi raporunu indirebilir.
 - `PATCH /api/reports/:id/send-enabiz`
 
+## Exam Records (Muayene Kayıtları)
+
+- `GET /api/exam-records?patientId=xxx`: DOCTOR veya ADMIN. patientId varsa o hastanın, yoksa doktorun kendi kayıtları.
+- `POST /api/exam-records`: DOCTOR. Body: `{ patientId, studyId?, complaint, diagnosis, notes? }`. 201 döner.
+- `GET /api/exam-records/:id`: DOCTOR veya ADMIN.
+- `PUT /api/exam-records/:id`: Yalnızca kaydı oluşturan DOCTOR. Body: `{ complaint?, diagnosis?, notes? }`.
+
+## Prescriptions (Reçeteler)
+
+- `GET /api/prescriptions?patientId=xxx`: DOCTOR, ADMIN veya PATIENT (sadece kendi reçeteleri).
+- `POST /api/prescriptions`: DOCTOR. Body: `{ patientId, examRecordId?, medications: [{name, dose, frequency, duration}], instructions? }`. 201 döner.
+- `GET /api/prescriptions/:id/pdf`: DOCTOR, ADMIN veya ilgili PATIENT. PDF döner.
+
+## Appointments (Güncelleme)
+
+- `POST /api/appointments`: Artık PATIENT rolü de kullanabilir. PATIENT için body: `{ examinationType, preferredDate, timePreference: MORNING|AFTERNOON|EVENING, notes? }`. Durum: PENDING.
+- `PATCH /api/appointments/:id/approve`: ADMIN veya SECRETARY. PENDING randevuyu SCHEDULED yapar, hastaya bildirim gönderir.
+
 ## Dashboard ve Logs
 
 - `GET /api/dashboard/admin`

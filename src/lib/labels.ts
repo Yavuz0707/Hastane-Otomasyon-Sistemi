@@ -46,6 +46,7 @@ export const deviceStatusLabels: Record<DeviceStatus, string> = {
 };
 
 export const appointmentStatusLabels: Record<AppointmentStatus, string> = {
+  PENDING: "Onay Bekliyor",
   SCHEDULED: "Planlandı",
   PATIENT_ARRIVED: "Hasta Geldi",
   IMAGING_STARTED: "Çekim Başladı",

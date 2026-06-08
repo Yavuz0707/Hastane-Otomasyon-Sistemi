@@ -128,7 +128,7 @@ export function AppointmentsTable({ appointments, actions = false }: { appointme
         {appointments.map((appointment) => (
           <tr key={appointment.id}>
             <td className="font-semibold text-wine-900">{appointment.patient.firstName} {appointment.patient.lastName}</td>
-            <td>{appointment.device.name}</td>
+            <td>{appointment.device?.name ?? "—"}</td>
             <td>{deviceTypeLabels[appointment.examinationType]}</td>
             <td>{formatDateTime(appointment.startTime)} - {format(appointment.endTime, "HH:mm")}</td>
             <td>{priorityLabels[appointment.priority]}</td>

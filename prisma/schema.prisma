@@ -42,6 +42,7 @@ enum ExaminationType {
 }
 
 enum AppointmentStatus {
+  PENDING
   SCHEDULED
   PATIENT_ARRIVED
   IMAGING_STARTED
@@ -83,6 +84,8 @@ model User {
   role           Role
   isActive       Boolean       @default(true)
   tcKimlikNo     String?       @unique
+  loginAttempts  Int           @default(0)
+  lockedUntil    DateTime?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   createdAppointments Appointment[] @relation("CreatedAppointments")
@@ -92,6 +95,8 @@ model User {
   auditLogs            AuditLog[]
   notifications        Notification[]
   patientProfile       Patient?
+  examRecords          ExamRecord[]
+  prescriptions        Prescription[]
 }
 
 model Patient {
@@ -113,6 +118,8 @@ model Patient {
   appointments   Appointment[]
   imagingStudies ImagingStudy[]
   reports        Report[]
+  examRecords    ExamRecord[]
+  prescriptions  Prescription[]
 }
 
 model Device {
@@ -132,7 +139,7 @@ model Device {
 model Appointment {
   id              String            @id @default(cuid())
   patientId       String
-  deviceId        String
+  deviceId        String?
   examinationType ExaminationType
   appointmentDate DateTime
   startTime       DateTime
@@ -144,11 +151,10 @@ model Appointment {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   patient         Patient           @relation(fields: [patientId], references: [id])
-  device          Device            @relation(fields: [deviceId], references: [id])
+  device          Device?           @relation(fields: [deviceId], references: [id])
   createdBy       User              @relation("CreatedAppointments", fields: [createdById], references: [id])
   imagingStudy    ImagingStudy?
 
-  @@index([deviceId, startTime, endTime])
   @@index([patientId, startTime, endTime])
 }
 
@@ -170,6 +176,7 @@ model ImagingStudy {
   technician    User?         @relation("TechnicianStudies", fields: [technicianId], references: [id])
   files         StudyFile[]
   report        Report?
+  examRecord    ExamRecord?
 }
 
 model StudyFile {
@@ -228,4 +235,35 @@ model Notification {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model ExamRecord {
+  id          String       @id @default(cuid())
+  patientId   String
+  doctorId    String
+  studyId     String?      @unique
+  complaint   String
+  diagnosis   String
+  notes       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  patient     Patient      @relation(fields: [patientId], references: [id])
+  doctor      User         @relation(fields: [doctorId], references: [id])
+  study       ImagingStudy? @relation(fields: [studyId], references: [id])
+  prescriptions Prescription[]
+}
+
+model Prescription {
+  id             String      @id @default(cuid())
+  patientId      String
+  doctorId       String
+  examRecordId   String?
+  prescriptionNo String      @unique @default(cuid())
+  medications    String
+  instructions   String?
+  status         String      @default("ACTIVE")
+  createdAt      DateTime    @default(now())
+  patient        Patient     @relation(fields: [patientId], references: [id])
+  doctor         User        @relation(fields: [doctorId], references: [id])
+  examRecord     ExamRecord? @relation(fields: [examRecordId], references: [id])
 }

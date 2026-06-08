@@ -16,12 +16,12 @@ async function main() {
 
   const passwordHash = (password) => bcrypt.hash(password, 12);
 
-  const admin = await prisma.user.create({ data: { name: "Sistem", surname: "Yöneticisi", email: "admin@radyoloji.local", role: "ADMIN", passwordHash: await passwordHash("Admin123!") } });
+  const admin = await prisma.user.create({ data: { name: "Sistem", surname: "Yöneticisi", email: "admin@radyoloji.local", role: "ADMIN", passwordHash: await passwordHash("Admin@123456!") } });
   const secretary = await prisma.user.create({ data: { name: "Ayşe", surname: "Sekreter", email: "sekreter@radyoloji.local", role: "SECRETARY", passwordHash: await passwordHash("Sekreter123!") } });
   const technician = await prisma.user.create({ data: { name: "Mehmet", surname: "Tekniker", email: "tekniker@radyoloji.local", role: "TECHNICIAN", passwordHash: await passwordHash("Tekniker123!") } });
-  const doctor = await prisma.user.create({ data: { name: "Dr. Elif", surname: "Radyolog", email: "doktor@radyoloji.local", role: "DOCTOR", passwordHash: await passwordHash("Doktor123!") } });
-  const patientUser = await prisma.user.create({ data: { name: "Demo", surname: "Hasta", email: "hasta@radyoloji.local", role: "PATIENT", passwordHash: await passwordHash("Hasta123!") } });
-  await prisma.user.create({ data: { name: "Pasif", surname: "Kullanıcı", email: "pasif@radyoloji.local", role: "SECRETARY", isActive: false, passwordHash: await passwordHash("Pasif123!") } });
+  const doctor = await prisma.user.create({ data: { name: "Dr. Elif", surname: "Radyolog", email: "doktor@radyoloji.local", role: "DOCTOR", passwordHash: await passwordHash("Doktor@12345!") } });
+  const patientUser = await prisma.user.create({ data: { name: "Demo", surname: "Hasta", email: "hasta@radyoloji.local", role: "PATIENT", passwordHash: await passwordHash("Hasta@12345!") } });
+  await prisma.user.create({ data: { name: "Pasif", surname: "Kullanıcı", email: "pasif@radyoloji.local", role: "SECRETARY", isActive: false, passwordHash: await passwordHash("Pasif@12345!") } });
 
   const patient = await prisma.patient.create({
     data: {

@@ -3,18 +3,24 @@ import { CalendarClock, MonitorCog, UserPlus, XCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { AppointmentsTable } from "@/components/tables";
 import { PageHeader, StatCard } from "@/components/ui";
+import { PendingAppointments } from "@/components/secretary/PendingAppointments";
 
 export default async function SecretaryDashboardPage() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
-  const [todayAppointments, cancelled, newPatients, activeDevices, appointments] = await Promise.all([
+  const [todayAppointments, cancelled, newPatients, activeDevices, appointments, pendingAppointments] = await Promise.all([
     prisma.appointment.count({ where: { startTime: { gte: today, lt: tomorrow } } }),
     prisma.appointment.count({ where: { status: AppointmentStatus.CANCELLED, updatedAt: { gte: today } } }),
     prisma.patient.count({ where: { createdAt: { gte: today } } }),
     prisma.device.count({ where: { isActive: true, status: "ACTIVE" } }),
-    prisma.appointment.findMany({ where: { startTime: { gte: today, lt: tomorrow } }, orderBy: { startTime: "asc" }, include: { patient: true, device: true } })
+    prisma.appointment.findMany({ where: { startTime: { gte: today, lt: tomorrow } }, orderBy: { startTime: "asc" }, include: { patient: true, device: true } }),
+    prisma.appointment.findMany({
+      where: { status: "PENDING" },
+      orderBy: { createdAt: "asc" },
+      include: { patient: true }
+    })
   ]);
   return (
     <div className="space-y-6">
@@ -25,6 +31,9 @@ export default async function SecretaryDashboardPage() {
         <StatCard label="İptal Edilen" value={cancelled} icon={XCircle} delay={180} />
         <StatCard label="Yeni Hasta" value={newPatients} icon={UserPlus} delay={270} />
       </div>
+      {pendingAppointments.length > 0 && (
+        <PendingAppointments appointments={pendingAppointments} />
+      )}
       <AppointmentsTable appointments={appointments} actions />
     </div>
   );

@@ -41,11 +41,18 @@ export const reportSchema = z.object({
   status: z.enum(["DRAFT", "PENDING_APPROVAL", "APPROVED"]).default("DRAFT")
 });
 
+export const passwordPolicy = z
+  .string()
+  .min(12, "Şifre en az 12 karakter olmalıdır")
+  .regex(/[A-Z]/, "En az 1 büyük harf içermelidir")
+  .regex(/[0-9]/, "En az 1 rakam içermelidir")
+  .regex(/[^A-Za-z0-9]/, "En az 1 özel karakter içermelidir (!@#$ vb.)");
+
 export const userSchema = z.object({
   name: z.string().min(2),
   surname: z.string().min(2),
   email: z.string().email(),
-  password: z.string().min(8),
+  password: passwordPolicy,
   role: z.enum(["ADMIN", "SECRETARY", "TECHNICIAN", "DOCTOR", "PATIENT"])
 });
 

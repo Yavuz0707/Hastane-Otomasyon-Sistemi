@@ -18,9 +18,10 @@ const registerSchema = z
       .refine(validateTCKimlik, "Geçersiz TC kimlik numarası"),
     password: z
       .string()
-      .min(8, "Şifre en az 8 karakter olmalıdır")
+      .min(12, "Şifre en az 12 karakter olmalıdır")
       .regex(/[A-Z]/, "En az 1 büyük harf içermelidir")
-      .regex(/[0-9]/, "En az 1 rakam içermelidir"),
+      .regex(/[0-9]/, "En az 1 rakam içermelidir")
+      .regex(/[^A-Za-z0-9]/, "En az 1 özel karakter içermelidir (!@#$ vb.)"),
     passwordConfirm: z.string()
   })
   .refine((d) => d.password === d.passwordConfirm, {
@@ -203,10 +204,11 @@ export default function RegisterPage() {
                       onChange={set("password")}
                       type="password"
                       required
-                      placeholder="En az 8 karakter, 1 büyük harf, 1 rakam"
+                      placeholder="En az 12 karakter, 1 büyük harf, 1 rakam, 1 özel karakter"
                     />
                   </label>
-                  {errors.password && <p className="mt-1 text-xs font-medium text-[#7B1E3A]">{errors.password}</p>}
+                  <p className="mt-1 text-xs text-[#C8A96A]">En az 12 karakter, 1 büyük harf, 1 rakam, 1 özel karakter</p>
+                  {errors.password && <p className="mt-1 text-sm text-[#7B1E3A]">{errors.password}</p>}
                 </div>
 
                 <div>

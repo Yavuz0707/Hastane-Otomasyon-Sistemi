@@ -6,11 +6,11 @@ import Link from "next/link";
 import { Activity, CalendarCheck, FileText, Layers, Loader2, LockKeyhole, ShieldCheck } from "lucide-react";
 
 const demoUsers = [
-  ["Admin", "admin@radyoloji.local", "Admin123!"],
+  ["Admin", "admin@radyoloji.local", "Admin@123456!"],
   ["Sekreter", "sekreter@radyoloji.local", "Sekreter123!"],
   ["Tekniker", "tekniker@radyoloji.local", "Tekniker123!"],
-  ["Doktor", "doktor@radyoloji.local", "Doktor123!"],
-  ["Hasta", "hasta@radyoloji.local", "Hasta123!"]
+  ["Doktor", "doktor@radyoloji.local", "Doktor@12345!"],
+  ["Hasta", "hasta@radyoloji.local", "Hasta@12345!"]
 ] as const;
 
 const features = [
@@ -24,7 +24,7 @@ const features = [
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("admin@radyoloji.local");
-  const [password, setPassword] = useState("Admin123!");
+  const [password, setPassword] = useState("Admin@123456!");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -109,7 +109,13 @@ export default function LoginPage() {
                 Şifre
                 <input className="form-field mt-1.5" value={password} onChange={(event) => setPassword(event.target.value)} type="password" required />
               </label>
-              {error ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-[#B42318] ring-1 ring-red-100">{error}</p> : null}
+              {error ? (
+                <p className={`text-sm text-center p-3 rounded-lg border ${
+                  error.includes("kilitli") || error.includes("kilitlendi")
+                    ? "bg-[#7B1E3A]/10 text-[#7B1E3A] border-[#7B1E3A]/30"
+                    : "bg-red-50 text-[#B42318] border-red-100"
+                }`}>{error}</p>
+              ) : null}
               <button className="btn-primary w-full" type="submit" disabled={loading}>
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
                 {loading ? "Giriş yapılıyor..." : "Giriş Yap"}

@@ -92,6 +92,11 @@ Kullanılan ana renkler:
 - **PACS/DICOM hazırlığı:** Gerçek entegrasyon için servis katmanı.
 - **e-Nabız mock:** Onaylı raporlar için simülasyon gönderim alanı.
 - **Gerçek zamanlı bildirim sistemi:** Rapor onayı, çekim tamamlama, yeni randevu ve kullanıcı kaydı gibi olaylar için rol bazlı bildirimler; header'daki zil ikonu ile anlık erişim.
+- **Muayene kaydı ve tanı yönetimi:** Doktor, tetkik detay sayfasından hasta şikayeti ve tanısını kaydedebilir. Muayene geçmişi hasta portalında görüntülenebilir.
+- **Dijital reçete ve PDF çıktısı:** Doktor ilaç listesi ve talimatlarla reçete oluşturur; hasta kendi reçetesini PDF olarak indirebilir.
+- **Hasta tarafından randevu talebi:** Hasta portalından tetkik türü, tercih edilen tarih ve saat aralığı seçilerek randevu talebi oluşturulabilir. Talep PENDING durumunda kalır; sekreter onaylayana kadar planlamaya alınmaz.
+- **Hesap kilitleme:** 5 başarısız giriş denemesinde hesap 15 dakika kilitlenir; kalan deneme sayısı kullanıcıya gösterilir.
+- **Güçlü şifre politikası:** En az 12 karakter, 1 büyük harf, 1 rakam, 1 özel karakter zorunlu.
 - **Premium dashboard UI:** Wine red ve champagne temalı responsive arayüz.
 
 ## Roller ve Paneller
