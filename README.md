@@ -1,6 +1,6 @@
 # Hastane Otomasyon Sistemi
 
-Modern, rol bazlı ve web tabanlı bir **hastane otomasyon sistemi**. Randevu planlama, hasta yönetimi, çekim takibi, rapor yazımı, PDF rapor çıktısı, hasta sonuç portalı, doktor-hasta iletişimi ve yönetim panellerini tek merkezde toplar.
+Modern, rol bazlı ve web tabanlı bir **hastane otomasyon sistemi**. Randevu planlama, hasta yönetimi, çekim takibi, rapor yazımı, PDF rapor çıktısı, hasta sonuç portalı, doktor-hasta iletişimi ve yönetim panellerini tek merkezde toplar..
 
 <p align="center">
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-14-111111?style=for-the-badge&logo=nextdotjs" />
